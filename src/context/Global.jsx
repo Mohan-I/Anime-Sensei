@@ -55,20 +55,22 @@ export const GlobalContextProvider = ({ children }) => {
   // Handle input change for search
   const handleChange = (e) => {
     setSearch(e.target.value);
-    if (e.target.value === '') {
-      dispatch({ type: SEARCH, payload: [] }); // Clear search results
+    if(e.target.value === ''){
+        state.isSearch = false;
     }
-  };
+}
 
   // Handle form submit for search
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (search) {
-      searchAnime(search);
-    } else {
-      alert('Please enter a search term');
+    if(search){
+        searchAnime(search);
+        state.isSearch = true;
+    }else{
+        state.isSearch = false;
+        alert('Please enter a search term')
     }
-  };
+}
 
   // Fetch popular anime
   const getPopularAnime = async () => {

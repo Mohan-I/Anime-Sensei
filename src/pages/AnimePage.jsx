@@ -13,6 +13,7 @@ function AnimePage() {
     handleSubmit,
     search,
     handleChange,
+    searchResults,
     getUpcomingAnime,
     getAiringAnime,
     getPopularAnime,
@@ -23,6 +24,27 @@ function AnimePage() {
   }
 
   const switchComponent = () => {
+    if (search && searchResults.length > 0) {
+      // If search results exist, display them in a search results component (or customize this)
+      return (
+        <div>
+          <h2 className="text-xl font-semibold mt-4 mb-2">Search Results:</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {searchResults.map((anime) => (
+              <div key={anime.mal_id} className="border p-2 rounded-md shadow-md">
+                <img
+                  src={anime.images.jpg.image_url}
+                  alt={anime.title}
+                  className="w-full h-40 object-cover rounded-md mb-2"
+                />
+                <h3 className="text-sm font-medium">{anime.title}</h3>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
     switch (rendered) {
       case 'popular':
         return <Popular />;
@@ -36,7 +58,7 @@ function AnimePage() {
   };
 
   return (
-    <div className="bg-gray-200">
+    <div className="bg-gray-200 py-2">
       {/* Animated Title */}
       <AnimatedTitle
         title="Disc<b>o</b>ver the <b>wo</b>rld's <br /> Lar<b>ge</b>st <b>an</b>ime hub"
@@ -100,6 +122,13 @@ function AnimePage() {
           </button>
         </div>
       </header>
+
+      {/* Display search term */}
+      {search && (
+        <p className="px-4 lg:px-20 text-lg font-semibold text-gray-700 mt-4">
+          Search results for: <span className="font-bold">{search}</span>
+        </p>
+      )}
 
       {/* Rendered Component */}
       <div className="px-4 lg:px-20">{switchComponent()}</div>
