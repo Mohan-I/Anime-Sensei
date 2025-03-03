@@ -393,3 +393,9 @@ body {
   transform: rotate(-4deg);
 }
 
+.auth-background {
+  background-image: url('../public/img/authBG.webp'); /* relative path from css file */
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: auto;
+}

@@ -38,13 +38,13 @@ function Profile() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center auth-background bg-gray-100">
       <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
         {userDetails ? (
           <div className="space-y-4">
             <div className="flex justify-center">
               <img
-                src={userDetails.photo || "https://via.placeholder.com/150"} // Placeholder if no photo
+                src={userDetails.photo || "../img/categories/avatars/cacti.svg"}
                 alt="Profile"
                 className="rounded-full border w-32 h-32 object-cover"
               />

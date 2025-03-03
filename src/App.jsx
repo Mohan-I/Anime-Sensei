@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -8,6 +8,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import BackToTopButton from "./components/ui/backToTop";
 import ScrollToTop from "./components/ScrollToTop";
+import { auth } from "./firebase/firebase"; // Import auth
 
 // Lazy load pages
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -25,13 +26,36 @@ const Profile = lazy(() => import("./pages/Profile"));
 const Error = lazy(() => import("./pages/Error"));
 
 function App() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setUser(user);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader />
+      </div>
+    );
+  }
+
+  const PrivateRoute = ({ element, ...rest }) => {
+    return user ? element : <Navigate to={ROUTES.LOGIN} />;
+  };
+
   return (
     <main className="relative min-h-screen w-screen overflow-x-hidden">
       <BrowserRouter>
         <ScrollToTop />
         <Navbar />
         <ToastContainer position="top-center" />
-        {/* Suspense for lazy-loaded components */}
         <Suspense
           fallback={
             <div className="flex items-center justify-center min-h-screen">
@@ -46,13 +70,14 @@ function App() {
             <Route path={ROUTES.GUIDE} element={<GuidePage />} />
             <Route path={ROUTES.CONTACT} element={<ContactPage />} />
             <Route path={ROUTES.COMMUNITY} element={<CommunityPage />} />
-            <Route path={ROUTES.ANIME} element={<AnimePage />} />
+            <Route path={ROUTES.ANIME} element={<PrivateRoute element={<AnimePage />} />} />
             <Route path={ROUTES.ANIMEITEM} element={<AnimeItem />} />
             <Route path={ROUTES.GALLERY} element={<Gallery />} />
             <Route path={ROUTES.REGISTER} element={<Register />} />
             <Route path={ROUTES.LOGIN} element={<Login />} />
-            <Route path={ROUTES.PROFILE} element={<Profile />} />
+            <Route path={ROUTES.PROFILE} element={<PrivateRoute element={<Profile />} />} />
             <Route path={ROUTES.ERROR} element={<Navigate to={ROUTES.HOME} replace />} />
+            <Route path="/" element={<Navigate to={ROUTES.LOGIN} />} />
           </Routes>
         </Suspense>
         <BackToTopButton />

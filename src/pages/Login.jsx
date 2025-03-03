@@ -29,7 +29,7 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center auth-background bg-gray-100">
       <ToastContainer />
       <div className="bg-white p-8 rounded shadow-md w-full max-w-md animate-fade-in">
         <h3 className="text-2xl font-semibold mb-6 text-center text-gray-800">
