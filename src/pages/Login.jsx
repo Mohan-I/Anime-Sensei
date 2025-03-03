@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { auth } from "../firebase/firebase";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import SignInwithGoogle from "./signInWIthGoogle";
+import SignInwithGoogle from "./signInWithGoogle";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
