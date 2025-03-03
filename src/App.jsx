@@ -4,6 +4,8 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Loader from "./components/ui/Loader";
 import { ROUTES } from "./routes";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import BackToTopButton from "./components/ui/backToTop";
 import ScrollToTop from "./components/ScrollToTop";
 
@@ -17,6 +19,9 @@ const CommunityPage = lazy(() => import("./pages/CommunityPage"));
 const AnimePage = lazy(() => import("./pages/AnimePage"));
 const AnimeItem = lazy(() => import("./components/AnimeItem"));
 const Gallery = lazy(() => import("./components/Gallery"));
+const Register = lazy(() => import("./pages/Register"));
+const Login = lazy(() => import("./pages/Login"));
+const Profile = lazy(() => import("./pages/Profile"));
 const Error = lazy(() => import("./pages/Error"));
 
 function App() {
@@ -25,6 +30,7 @@ function App() {
       <BrowserRouter>
         <ScrollToTop />
         <Navbar />
+        <ToastContainer position="top-center" />
         {/* Suspense for lazy-loaded components */}
         <Suspense
           fallback={
@@ -43,6 +49,9 @@ function App() {
             <Route path={ROUTES.ANIME} element={<AnimePage />} />
             <Route path={ROUTES.ANIMEITEM} element={<AnimeItem />} />
             <Route path={ROUTES.GALLERY} element={<Gallery />} />
+            <Route path={ROUTES.REGISTER} element={<Register />} />
+            <Route path={ROUTES.LOGIN} element={<Login />} />
+            <Route path={ROUTES.PROFILE} element={<Profile />} />
             <Route path={ROUTES.ERROR} element={<Navigate to={ROUTES.HOME} replace />} />
           </Routes>
         </Suspense>

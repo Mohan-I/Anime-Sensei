@@ -11,6 +11,9 @@ export const ROUTES = {
     ANIME: '/anime',
     ANIMEITEM: '/anime/:id',
     GALLERY: '/character/:id',
+    REGISTER: '/register',
+    LOGIN: '/login',
+    PROFILE: '/profile',
     ERROR: '*',
   };
   
