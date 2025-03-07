@@ -17,7 +17,7 @@ const Footer = () => {
           target='_blank'
           rel='noopener noreferrer'
           className='text-teal-200 transition-colors duration-500 ease-in-out hover:text-white'
-          >Mohan Yadav</a>  2025. All rights reserved.
+          >Anime Sensei</a>  2025. All rights reserved.
         </p>
 
         <div className='flex justify-center gap-4  md:justify-start'>
