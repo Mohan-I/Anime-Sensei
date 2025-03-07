@@ -5,6 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SignInwithGoogle from "./signInWithGoogle";
 import { useNavigate } from "react-router-dom";
+import { Link, NavLink } from 'react-router-dom';
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -70,9 +71,9 @@ function Login() {
           </div>
           <p className="text-center text-sm text-gray-600">
             New user{" "}
-            <a href="/register" className="text-blue-500 hover:underline">
+            <NavLink to="/register" className="text-blue-500 hover:underline">
               Register Here
-            </a>
+            </NavLink>
           </p>
           <SignInwithGoogle />
         </form>
