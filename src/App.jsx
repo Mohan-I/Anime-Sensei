@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import BackToTopButton from "./components/ui/backToTop";
 import ScrollToTop from "./components/ScrollToTop";
 import { auth } from "./firebase/firebase"; // Import auth
+import ErrorBoundary from "./pages/Error";
 
 // Lazy load pages
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -52,6 +53,7 @@ function App() {
 
   return (
     <main className="relative min-h-screen w-screen overflow-x-hidden">
+      <ErrorBoundary>
       <BrowserRouter>
         <ScrollToTop />
         <Navbar />
@@ -83,6 +85,7 @@ function App() {
         <BackToTopButton />
         <Footer />
       </BrowserRouter>
+      </ErrorBoundary>
     </main>
   );
 }

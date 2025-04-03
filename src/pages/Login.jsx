@@ -32,8 +32,8 @@ function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center auth-background bg-gray-100">
       <ToastContainer />
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-md animate-fade-in">
-        <h3 className="text-2xl font-semibold mb-6 text-center text-gray-800">
+      <div className="bg-white p-8 rounded shadow-md border-4 border-indigo-600 w-full max-w-md animate-fade-in">
+        <h3 className="text-2xl font-general uppercase mb-6 text-center text-gray-800">
           Login
         </h3>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -64,7 +64,7 @@ function Login() {
           <div>
             <button
               type="submit"
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white p-3 rounded transition duration-300 ease-in-out"
+              className="w-full bg-indigo-500 hover:bg-violet-600 text-white p-3 rounded transition duration-300 ease-in-out"
             >
               Submit
             </button>

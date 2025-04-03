@@ -43,12 +43,12 @@ function Slider() {
       <div className="hidden group-hover:block absolute top-[50%] -translate-x-0 translate-y-[-50%] right-5 text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer">
         <BsChevronCompactRight onClick={nextSlide} size={30} />
       </div>
-      <div className="flex top-4 justify-center py-2">
+      <div className="flex top-4 bg-indigo-500 justify-center py-2">
         {slides.map((slide, slideIndex) => (
           <div
             key={slideIndex}
             onClick={() => goToSlide(slideIndex)}
-            className="text-2xl cursor-pointer"
+            className="text-2xl hover:bg-violet-600 cursor-pointer"
           >
             <RxDotFilled />
           </div>

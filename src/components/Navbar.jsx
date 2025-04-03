@@ -109,13 +109,13 @@ const Navbar = () => {
 
       {/* Mobile Navigation Menu - Toggled */}
       {isMenuOpen && (
-        <div className="md:hidden absolute top-16 left-0 right-0 bg-white p-4 shadow-lg">
+        <div className="md:hidden absolute p-4 rounded-md top-16 left-0 right-0 bg-white p-4 shadow-lg">
           <div className="flex flex-col items-center">
             {navItems.map((item) => (
               <Link
                 key={item}
                 to={`/${item.toLowerCase()}`}
-                className="py-2 px-4 hover:bg-gray-200"
+                className="py-2 px-4 font-general hover:bg-gray-200"
                 onClick={toggleMenu} // Close the menu on item click
               >
                 {item}

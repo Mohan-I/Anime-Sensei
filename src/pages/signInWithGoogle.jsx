@@ -35,10 +35,11 @@ function SignInwithGoogle() {
     <div className="space-y-2">
       <p className="text-center text-gray-500">--Or continue with--</p>
       <div
-        className="flex justify-center cursor-pointer p-3 rounded-full hover:bg-gray-200 transition duration-200"
+        className="flex justify-center cursor-pointer flex items-center justify-center py-2 px-20 border rounded-full hover:bg-gray-200 transition duration-200"
         onClick={googleLogin}
-      >
+      > 
         <img src="./img/google.svg" alt="Google" className="w-12 h-12" />
+        <span class="ml-2">Sign in with Google</span>
       </div>
     </div>
   );

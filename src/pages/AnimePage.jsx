@@ -5,6 +5,7 @@ import Upcoming from '../components/Upcoming';
 import Airing from '../components/Airing';
 import { TiCoffee, TiGlobe, TiUploadOutline } from 'react-icons/ti';
 import AnimatedTitle from '../components/ui/AnimatedTitle';
+import { Link } from 'react-router-dom';
 
 function AnimePage() {
   const {
@@ -31,6 +32,11 @@ function AnimePage() {
           <h2 className="text-xl font-semibold mt-4 mb-2">Search Results:</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {searchResults.map((anime) => (
+              <Link
+              to={`/anime/${anime.mal_id}`}
+              key={anime.mal_id}
+              className="transform transition-all hover:scale-105"
+            >
               <div key={anime.mal_id} className="border p-2 rounded-md shadow-md">
                 <img
                   src={anime.images.jpg.image_url}
@@ -39,6 +45,7 @@ function AnimePage() {
                 />
                 <h3 className="text-sm font-medium">{anime.title}</h3>
               </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -126,7 +133,7 @@ function AnimePage() {
       {/* Display search term */}
       {search && (
         <p className="px-4 lg:px-20 text-lg font-semibold text-gray-700 mt-4">
-          Search results for: <span className="font-bold">{search}</span>
+          Search for : <span className="font-bold">{search}</span>
         </p>
       )}
 

@@ -8,10 +8,10 @@ import PageHero from "../components/ui/PageHero";
 const NewsPage = () => {
 
   return (
-    <div className="bg-gradient-to-t from-gray-500 to-gray-400">
+    <div className="bg-gradient-to-t from-white-500 to-gray-400">
       <Slider />
       <div className="relative mb-8 mt-14 flex flex-col items-center gap-5">
-        <div className="font-general text-sm uppercase md:text-[10px] text-gray-600">
+        <div className="font-general text-sm uppercase md:text-[10px] text-white-600">
           Welcome to Anime Sensei
         </div>
         <PageHero
@@ -22,7 +22,7 @@ const NewsPage = () => {
       <News />
       <div className="justify-items-center rounded-md mx-4 bg-white">
         <AnimatedTitle
-          title="<b>o</b>ur Blo<b>g</b>s"
+          title="<b>o</b>ur <b>E</b>books"
           containerClass="pt-14 mt-4 pointer-events-none mix-blend-difference relative z-10"
         />
         <Ebooks />
