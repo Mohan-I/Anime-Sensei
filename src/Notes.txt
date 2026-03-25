@@ -3,3 +3,5 @@ Inspired from
 
 https://zentry.com
 https://github.com/Maclinz/anime-database
+
+-- Work in progress -- continuation of repo begins in April 2026
