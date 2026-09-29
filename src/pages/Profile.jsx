@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { auth, db } from "../firebase/firebase";
-<<<<<<< HEAD
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -109,34 +108,6 @@ function Profile() {
       setSaving(false);
     }
   };
-=======
-import { doc, getDoc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
-
-function Profile() {
-  const [userDetails, setUserDetails] = useState(null);
-  const navigate = useNavigate();
-
-  const fetchUserData = async () => {
-    auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        const docRef = doc(db, "Users", user.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setUserDetails(docSnap.data());
-        } else {
-          console.log("User data not found.");
-        }
-      } else {
-        navigate("/login"); // Redirect to login if not authenticated
-      }
-    });
-  };
-
-  useEffect(() => {
-    fetchUserData();
-  }, [navigate]); // Add navigate as dependency
->>>>>>> b96a07f88943b05c32ebcbdf41eb54bd1803d162
 
   const handleLogout = async () => {
     try {
