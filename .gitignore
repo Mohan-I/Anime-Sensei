@@ -1,8 +1,11 @@
+<<<<<<< HEAD
 # Environment variables (never commit credentials)
 .env
 .env.local
 .env.*.local
 
+=======
+>>>>>>> b96a07f88943b05c32ebcbdf41eb54bd1803d162
 # Logs
 logs
 *.log

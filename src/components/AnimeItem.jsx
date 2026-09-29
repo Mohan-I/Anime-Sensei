@@ -1,7 +1,10 @@
 import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
+<<<<<<< HEAD
 import { auth, db } from "../firebase/firebase";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+=======
+>>>>>>> b96a07f88943b05c32ebcbdf41eb54bd1803d162
 
 function AnimeItem() {
   const { id } = useParams();
@@ -29,6 +32,7 @@ function AnimeItem() {
     source,
   } = anime;
 
+<<<<<<< HEAD
   // Save last visited anime to Firestore for the logged-in user
   const recordLastWatched = async (animeData) => {
     const user = auth.currentUser;
@@ -53,13 +57,18 @@ function AnimeItem() {
     }
   };
 
+=======
+>>>>>>> b96a07f88943b05c32ebcbdf41eb54bd1803d162
   // Get anime based on ID
   const getAnime = async (animeId) => {
     const response = await fetch(`https://api.jikan.moe/v4/anime/${animeId}`);
     const data = await response.json();
     setAnime(data.data);
+<<<<<<< HEAD
     // Record visit after fetching anime details
     recordLastWatched(data.data);
+=======
+>>>>>>> b96a07f88943b05c32ebcbdf41eb54bd1803d162
   };
 
   // Get characters
@@ -69,6 +78,10 @@ function AnimeItem() {
     );
     const data = await response.json();
     setCharacters(data.data);
+<<<<<<< HEAD
+=======
+    console.log(data.data);
+>>>>>>> b96a07f88943b05c32ebcbdf41eb54bd1803d162
   };
 
   // Initial render
@@ -173,11 +186,19 @@ function AnimeItem() {
             const { images, name, mal_id } = character.character;
             return (
               <Link to={`/character/${mal_id}`} key={index}>
+<<<<<<< HEAD
                 <div className="relative p-4 border-4 bg-gradient-to-r from-violet-600 to-indigo-500 rounded-2xl hover:shadow-lg transform hover:scale-105 transition-all">
                   <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-neutral-50 rounded-tl-2xl" />
                   <div className="absolute top-0 right-0 w-20 h-20 border-t-2 border-r-2 border-neutral-50 rounded-tr-2xl" />
                   <div className="absolute bottom-0 left-0 w-20 h-20 border-b-2 border-l-2 border-neutral-50 rounded-bl-2xl" />
                   <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-neutral-50 rounded-br-2xl" />
+=======
+                <div className="p-4 border-4 bg-gradient-to-r from-violet-600 to-indigo-500 rounded-2xl hover:shadow-lg transform hover:scale-105 transition-all">
+                  <div class="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-neutral-50 rounded-tl-2xl" />
+                  <div class="absolute top-0 right-0 w-20 h-20 border-t-2 border-r-2 border-neutral-50 rounded-tr-2xl" />
+                  <div class="absolute bottom-0 left-0 w-20 h-20 border-b-2 border-l-2 border-neutral-50 rounded-bl-2xl" />
+                  <div class="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-neutral-50 rounded-br-2xl" />
+>>>>>>> b96a07f88943b05c32ebcbdf41eb54bd1803d162
                   <img
                     src={images?.jpg.image_url}
                     alt={name}
