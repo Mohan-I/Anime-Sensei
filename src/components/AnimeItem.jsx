@@ -69,7 +69,6 @@ function AnimeItem() {
     );
     const data = await response.json();
     setCharacters(data.data);
-    console.log(data.data);
   };
 
   // Initial render
@@ -179,11 +178,6 @@ function AnimeItem() {
                   <div className="absolute top-0 right-0 w-20 h-20 border-t-2 border-r-2 border-neutral-50 rounded-tr-2xl" />
                   <div className="absolute bottom-0 left-0 w-20 h-20 border-b-2 border-l-2 border-neutral-50 rounded-bl-2xl" />
                   <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-neutral-50 rounded-br-2xl" />
-                <div className="p-4 border-4 bg-gradient-to-r from-violet-600 to-indigo-500 rounded-2xl hover:shadow-lg transform hover:scale-105 transition-all">
-                  <div class="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-neutral-50 rounded-tl-2xl" />
-                  <div class="absolute top-0 right-0 w-20 h-20 border-t-2 border-r-2 border-neutral-50 rounded-tr-2xl" />
-                  <div class="absolute bottom-0 left-0 w-20 h-20 border-b-2 border-l-2 border-neutral-50 rounded-bl-2xl" />
-                  <div class="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-neutral-50 rounded-br-2xl" />
                   <img
                     src={images?.jpg.image_url}
                     alt={name}

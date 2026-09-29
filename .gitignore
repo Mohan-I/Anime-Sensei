@@ -1,4 +1,4 @@
-# Environment variables (never commit credentials)
+# Environment variables (never commit - credentials)
 .env
 .env.local
 .env.*.local
