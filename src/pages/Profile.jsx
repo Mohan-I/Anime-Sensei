@@ -138,7 +138,6 @@ function Profile() {
   const handleLogout = async () => {
     try {
       await auth.signOut();
-<<<<<<< HEAD
       navigate("/login");
     } catch (error) {
       console.error("Logout error:", error.message);
@@ -343,7 +342,6 @@ function Profile() {
           )}
         </div>
 
-=======
       navigate("/login"); // Use navigate for redirection
       console.log("User logged out successfully!");
     } catch (error) {
@@ -391,14 +389,9 @@ function Profile() {
         ) : (
           <p className="text-center">Loading...</p>
         )}
->>>>>>> b96a07f88943b05c32ebcbdf41eb54bd1803d162
       </div>
     </div>
   );
 }
 
-<<<<<<< HEAD
 export default Profile;
-=======
-export default Profile;
->>>>>>> b96a07f88943b05c32ebcbdf41eb54bd1803d162
