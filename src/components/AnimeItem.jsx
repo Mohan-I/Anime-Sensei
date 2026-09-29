@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { auth, db } from "../firebase/firebase";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 
 function AnimeItem() {
   const { id } = useParams();
