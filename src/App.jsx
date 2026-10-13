@@ -24,6 +24,7 @@ const Gallery = lazy(() => import("./components/Gallery"));
 const Register = lazy(() => import("./pages/Register"));
 const Login = lazy(() => import("./pages/Login"));
 const Profile = lazy(() => import("./pages/Profile"));
+const SenseiPage = lazy(() => import("./pages/SenseiPage"));
 const Error = lazy(() => import("./pages/Error"));
 
 function App() {
@@ -78,6 +79,7 @@ function App() {
             <Route path={ROUTES.REGISTER} element={<Register />} />
             <Route path={ROUTES.LOGIN} element={<Login />} />
             <Route path={ROUTES.PROFILE} element={<PrivateRoute element={<Profile />} />} />
+            <Route path={ROUTES.SENSEI} element={<SenseiPage />} />
             <Route path={ROUTES.ERROR} element={<Navigate to={ROUTES.HOME} replace />} />
             <Route path="/" element={<Navigate to={ROUTES.LOGIN} />} />
           </Routes>

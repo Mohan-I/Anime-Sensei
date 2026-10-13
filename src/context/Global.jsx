@@ -1,141 +1,172 @@
-import React, { createContext, useContext, useReducer, useState, useEffect } from 'react';
+import { createContext, useContext, useReducer, useState, useEffect } from 'react';
+import {
+  getTopAnime,
+  searchAnimeApi,
+  getCharacterPictures,
+  getCharacterById,
+  getCharacterFullById,
+  getCharacterAnime,
+  getCharacterVoiceActors,
+} from '../services/tenraiService';
 
 const GlobalContext = createContext();
 
-const baseUrl = 'https://api.jikan.moe/v4';
-
-// Action types
-const LOADING = 'LOADING';
-const SEARCH = 'SEARCH';
+// ── Action types ──────────────────────────────────────────────────────────────
+const LOADING           = 'LOADING';
+const SEARCH            = 'SEARCH';
 const GET_POPULAR_ANIME = 'GET_POPULAR_ANIME';
-const GET_UPCOMING_ANIME = 'GET_UPCOMING_ANIME';
-const GET_AIRING_ANIME = 'GET_AIRING_ANIME';
-const GET_PICTURES = 'GET_PICTURES';
-const SET_RENDERED = 'SET_RENDERED';
+const GET_UPCOMING_ANIME= 'GET_UPCOMING_ANIME';
+const GET_AIRING_ANIME  = 'GET_AIRING_ANIME';
+const GET_PICTURES      = 'GET_PICTURES';
+const GET_CHARACTER     = 'GET_CHARACTER';
+const SET_RENDERED      = 'SET_RENDERED';
+const SET_SEARCHING     = 'SET_SEARCHING';
+const ERROR             = 'ERROR';
 
-// Reducer
+// ── Reducer ───────────────────────────────────────────────────────────────────
 const reducer = (state, action) => {
   switch (action.type) {
-    case LOADING:
-      return { ...state, loading: true };
-    case GET_POPULAR_ANIME:
-      return { ...state, popularAnime: action.payload, loading: false };
-    case SEARCH:
-      return { ...state, searchResults: action.payload, loading: false };
-    case GET_UPCOMING_ANIME:
-      return { ...state, upcomingAnime: action.payload, loading: false };
-    case GET_AIRING_ANIME:
-      return { ...state, airingAnime: action.payload, loading: false };
-    case GET_PICTURES:
-      // We now store both pictures and character's name
-      return { ...state, pictures: action.payload.pictures, characterName: action.payload.name, loading: false };
-    case SET_RENDERED:
-      return { ...state, rendered: action.payload };
-    default:
-      return state;
+    case LOADING:           return { ...state, loading: true,  error: '' };
+    case GET_POPULAR_ANIME: return { ...state, popularAnime:  action.payload, loading: false };
+    case SEARCH:            return { ...state, searchResults: action.payload, loading: false };
+    case GET_UPCOMING_ANIME:return { ...state, upcomingAnime: action.payload, loading: false };
+    case GET_AIRING_ANIME:  return { ...state, airingAnime:   action.payload, loading: false };
+    case GET_PICTURES:      return { ...state, pictures: action.payload.pictures, characterName: action.payload.name, loading: false };
+    case GET_CHARACTER:     return { ...state, character: action.payload, loading: false };
+    case SET_RENDERED:      return { ...state, rendered:  action.payload };
+    case SET_SEARCHING:     return { ...state, isSearch:  action.payload };
+    case ERROR:             return { ...state, error: action.payload, loading: false };
+    default:                return state;
   }
 };
 
-// GlobalContextProvider
+// ── Provider ──────────────────────────────────────────────────────────────────
 export const GlobalContextProvider = ({ children }) => {
   const initialState = {
-    popularAnime: [],
+    popularAnime:  [],
     upcomingAnime: [],
-    airingAnime: [],
-    pictures: [],
+    airingAnime:   [],
+    pictures:      [],
     searchResults: [],
-    loading: false,
-    rendered: 'popular', // Default rendered value
-    characterName: '', // Added character name to state
+    character:     null,
+    loading:       false,
+    error:         '',
+    isSearch:      false,
+    rendered:      'popular',
+    characterName: '',
   };
 
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state,  dispatch] = useReducer(reducer, initialState);
   const [search, setSearch] = useState('');
 
-  // Handle input change for search
+  // ── Search input handlers ────────────────────────────────────────────────
   const handleChange = (e) => {
     setSearch(e.target.value);
-    if(e.target.value === ''){
-        state.isSearch = false;
-    }
-}
+    if (e.target.value === '') dispatch({ type: SET_SEARCHING, payload: false });
+  };
 
-  // Handle form submit for search
   const handleSubmit = (e) => {
     e.preventDefault();
-    if(search){
-        searchAnime(search);
-        state.isSearch = true;
-    }else{
-        state.isSearch = false;
-        alert('Please enter a search term')
+    if (search) {
+      searchAnime(search);
+      dispatch({ type: SET_SEARCHING, payload: true });
+    } else {
+      dispatch({ type: SET_SEARCHING, payload: false });
+      alert('Please enter a search term');
     }
-}
-
-  // Fetch popular anime
-  const getPopularAnime = async () => {
-    dispatch({ type: LOADING });
-    const response = await fetch(`${baseUrl}/top/anime?filter=bypopularity`);
-    const data = await response.json();
-    dispatch({ type: GET_POPULAR_ANIME, payload: data.data });
   };
 
-  // Fetch upcoming anime
-  const getUpcomingAnime = async () => {
-    dispatch({ type: LOADING });
-    const response = await fetch(`${baseUrl}/top/anime?filter=upcoming`);
-    const data = await response.json();
-    dispatch({ type: GET_UPCOMING_ANIME, payload: data.data });
-  };
-
-  // Fetch airing anime
-  const getAiringAnime = async () => {
-    dispatch({ type: LOADING });
-    const response = await fetch(`${baseUrl}/top/anime?filter=airing`);
-    const data = await response.json();
-    dispatch({ type: GET_AIRING_ANIME, payload: data.data });
-  };
-
-  // Search for anime by title
-  const searchAnime = async (anime) => {
-    dispatch({ type: LOADING });
-    const response = await fetch(`${baseUrl}/anime?q=${anime}&order_by=popularity&sort=asc&sfw`);
-    const data = await response.json();
-    dispatch({ type: SEARCH, payload: data.data });
-  };
-
-  // Get anime pictures and character's name
-  const getAnimePictures = async (id) => {
-    dispatch({ type: LOADING });
-    const response = await fetch(`${baseUrl}/characters/${id}/pictures`);
-    const data = await response.json();
-
-    // Assuming the character's name is available here
-    const characterName = data.data?.character?.name;
-
+  // ── Shared error handler ─────────────────────────────────────────────────
+  const handleError = (error) => {
+    console.error('Tenrai request failed:', error);
     dispatch({
-      type: GET_PICTURES,
-      payload: {
-        pictures: data.data,
-        name: characterName,
-      },
+      type:    ERROR,
+      payload: error instanceof Error ? error.message : 'Unable to load anime data.',
     });
   };
 
-  // Set the rendered state (for switching components)
-  const setRendered = (renderedValue) => {
-    dispatch({ type: SET_RENDERED, payload: renderedValue });
+  // ── Data fetchers — all use jikanService (cache + throttle + retry) ──────
+  const getPopularAnime = async () => {
+    dispatch({ type: LOADING });
+    try {
+      const data = await getTopAnime('bypopularity');
+      dispatch({ type: GET_POPULAR_ANIME, payload: data.data || [] });
+    } catch (e) { handleError(e); }
   };
 
-  // Initial fetch for popular anime
-  useEffect(() => {
-    getPopularAnime();
-  }, []);
+  const getUpcomingAnime = async () => {
+    dispatch({ type: LOADING });
+    try {
+      const data = await getTopAnime('upcoming');
+      dispatch({ type: GET_UPCOMING_ANIME, payload: data.data || [] });
+    } catch (e) { handleError(e); }
+  };
+
+  const getAiringAnime = async () => {
+    dispatch({ type: LOADING });
+    try {
+      const data = await getTopAnime('airing');
+      dispatch({ type: GET_AIRING_ANIME, payload: data.data || [] });
+    } catch (e) { handleError(e); }
+  };
+
+  const searchAnime = async (query) => {
+    dispatch({ type: LOADING });
+    try {
+      const data = await searchAnimeApi(query);
+      dispatch({ type: SEARCH, payload: data.data || [] });
+    } catch (e) { handleError(e); }
+  };
+
+  const getAnimePictures = async (id) => {
+    dispatch({ type: LOADING });
+    try {
+      // Fire pictures + basic character info in parallel
+      const [picsRes, charRes] = await Promise.allSettled([
+        getCharacterPictures(id),
+        getCharacterById(id),
+      ]);
+      dispatch({
+        type: GET_PICTURES,
+        payload: {
+          pictures: picsRes.status === 'fulfilled' ? (picsRes.value.data || []) : [],
+          name:     charRes.status === 'fulfilled' ? (charRes.value.data?.name ?? '') : '',
+        },
+      });
+    } catch (e) { handleError(e); }
+  };
+
+  const getCharacterFull = async (id) => {
+    dispatch({ type: LOADING });
+    try {
+      const [charRes, picsRes, voicesRes, animeRes] = await Promise.allSettled([
+        getCharacterFullById(id),
+        getCharacterPictures(id),
+        getCharacterVoiceActors(id),
+        getCharacterAnime(id),
+      ]);
+      dispatch({
+        type: GET_CHARACTER,
+        payload: {
+          full:    charRes.status   === 'fulfilled' ? charRes.value.data   : null,
+          pictures:picsRes.status   === 'fulfilled' ? picsRes.value.data   : [],
+          voices:  voicesRes.status === 'fulfilled' ? voicesRes.value.data : [],
+          anime:   animeRes.status  === 'fulfilled' ? animeRes.value.data  : [],
+        },
+      });
+    } catch (e) { handleError(e); }
+  };
+
+  const setRendered = (value) => dispatch({ type: SET_RENDERED, payload: value });
+
+  // ── Bootstrap ────────────────────────────────────────────────────────────
+  useEffect(() => { getPopularAnime(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <GlobalContext.Provider
       value={{
         ...state,
+        isLoading: state.loading,
         search,
         setSearch,
         handleChange,
@@ -145,6 +176,7 @@ export const GlobalContextProvider = ({ children }) => {
         getUpcomingAnime,
         getAiringAnime,
         getAnimePictures,
+        getCharacterFull,
         setRendered,
       }}
     >
@@ -153,5 +185,4 @@ export const GlobalContextProvider = ({ children }) => {
   );
 };
 
-// Custom hook to use global context
 export const useGlobalContext = () => useContext(GlobalContext);

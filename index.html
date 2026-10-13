@@ -5,6 +5,23 @@
     <link rel="icon" type="image/svg+xml" href="/logo.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Anime Sensei</title>
+    <!--
+      Content-Security-Policy
+      ─────────────────────────────────────────────────────────────────────────
+      connect-src includes api.tenrai.org (Tenrai anime API).
+      frame-src allows YouTube embeds for anime trailers.
+      img-src includes cdn.myanimelist.net (anime cover art) and YouTube thumbnails.
+      Adjust hosting-level headers (Vercel/Netlify/_headers) to match if deploying.
+    -->
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval';
+      style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+      font-src 'self' https://fonts.gstatic.com;
+      img-src 'self' data: blob: https://cdn.myanimelist.net https://myanimelist.net https://img.youtube.com https://ui-avatars.com;
+      frame-src https://www.youtube.com https://www.youtube-nocookie.com;
+      connect-src 'self' https://api.tenrai.org https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com;
+    " />
   </head>
   <body>
     <div id="root"></div>

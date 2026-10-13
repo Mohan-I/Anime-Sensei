@@ -6,7 +6,7 @@ Anime Sensei is a high‑performance web application for discovering and streami
 > **Live Demo:** [anime-sensei-swart.vercel.app](https://anime-sensei-swart.vercel.app/)  
 > **Status:** Frontend fully deployed; backend (Node.js + PostgreSQL + Redis) in active development.
 
-![Preview](Screenshot%202026-09-08%20232847.png)
+![Preview](preview.png)
 ---
 
 ## ✨ Key Features

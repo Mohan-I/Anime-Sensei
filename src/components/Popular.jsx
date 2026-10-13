@@ -1,76 +1,51 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
 import { useGlobalContext } from '../context/Global';
+import AnimeCard from './ui/AnimeCard';
 import Sidebar from './ui/Sidebar';
 
 function Popular() {
-  const { popularAnime, searchResults, isSearch, isLoading, rendered } = useGlobalContext();
+  const { popularAnime, searchResults, isSearch, isLoading, error, rendered } = useGlobalContext();
 
-  // Loading state
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <p className="text-lg font-semibold text-gray-500">Loading...</p>
+      <div className="flex justify-center items-center py-20">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-violet-400 border-t-transparent rounded-full animate-spin" />
+          <p className="text-gray-500 font-general text-sm">Loading anime…</p>
+        </div>
       </div>
     );
   }
 
-  // Conditional render for popular anime or search results
-  const conditionalRender = () => {
-    if (!isSearch && rendered === 'popular') {
-      if (!popularAnime || popularAnime.length === 0) {
-        return (
-          <div className="text-center text-gray-500 text-lg">
-            No popular anime found.
-          </div>
-        );
-      }
-      return popularAnime.map((anime) => (
-        <Link
-          to={`/anime/${anime.mal_id}`}
-          key={anime.mal_id}
-          className="transform transition-all hover:scale-105"
-        >
-          <img
-            className="w-full h-full object-cover rounded-lg border-4 border-gray-200"
-            src={anime.images.jpg.large_image_url}
-            alt={anime.title}
-          />
-        </Link>
-      ));
-    } else {
-      if (!searchResults || searchResults.length === 0) {
-        return (
-          <div className="text-center text-gray-500 text-lg">
-            No search results found.
-          </div>
-        );
-      }
-      return searchResults.map((anime) => (
-        <Link
-          to={`/anime/${anime.mal_id}`}
-          key={anime.mal_id}
-          className="transform transition-all hover:scale-105"
-        >
-          <img
-            className="w-full h-full object-cover rounded-lg border-4 border-gray-200"
-            src={anime.images.jpg.large_image_url}
-            alt={anime.title}
-          />
-        </Link>
-      ));
-    }
-  };
+  if (error) {
+    return (
+      <div className="text-center text-red-500 text-sm font-general p-8">
+        {error} — please try again in a moment.
+      </div>
+    );
+  }
+
+  const list = (!isSearch && rendered === 'popular') ? popularAnime : searchResults;
+  const empty = !list || list.length === 0;
 
   return (
-    <div className="flex flex-col lg:flex-row">
-      {/* Anime Grid */}
-      <div className="popular-anime grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-8 p-4 w-full bg-white border-t-4 border-gray-200">
-        {conditionalRender()}
+    <div className="flex flex-col lg:flex-row gap-6 px-4 py-6">
+      {/* Grid */}
+      <div className="flex-1">
+        {empty ? (
+          <p className="text-center text-gray-400 text-sm font-general py-10">
+            {isSearch ? 'No search results found.' : 'No popular anime found.'}
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {list.map((anime) => (
+              <AnimeCard key={anime.mal_id} anime={anime} />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Sidebar */}
-      <div className="w-full lg:w-1/4 mt-8 lg:mt-0 px-4">
+      <div className="w-full lg:w-72 flex-shrink-0">
         <Sidebar />
       </div>
     </div>

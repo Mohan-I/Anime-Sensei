@@ -14,6 +14,7 @@ export const ROUTES = {
     REGISTER: '/register',
     LOGIN: '/login',
     PROFILE: '/profile',
+    SENSEI: '/sensei',
     ERROR: '*',
   };
   

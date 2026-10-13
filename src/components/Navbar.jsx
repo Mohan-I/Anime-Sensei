@@ -6,6 +6,7 @@ import gsap from 'gsap';
 import { Link, NavLink } from 'react-router-dom'; // Import Link from react-router-dom for navigation
 
 const navItems = ['News', 'Guide', 'Community', 'About', 'Contact'];
+const senseiPath = '/sensei';
 
 const Navbar = () => {
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
@@ -71,6 +72,16 @@ const Navbar = () => {
                 containerClass="bg-blue-50 flex items-center justify-center gap-2"
               />
             </NavLink>
+            {/* Sensei chatbot link — highlighted */}
+            {/* <NavLink
+              to={senseiPath}
+              className="relative ms-10 font-general text-xs uppercase
+                         px-3 py-1 rounded-full border border-violet-400/60
+                         text-white hover:text-violet-200 hover:bg-violet-600/30
+                         transition-all duration-200 tracking-widest"
+            >
+              🎌 Sensei
+            </NavLink> */}
           </div>
 
           {/* Mobile Hamburger Menu Icon */}
@@ -91,6 +102,7 @@ const Navbar = () => {
                 {item}
               </Link>
             ))}
+            
           </div>
 
           {/* Audio Indicator */}
@@ -104,6 +116,7 @@ const Navbar = () => {
               />
             ))}
           </button>
+          
         </nav>
       </header>
 
@@ -121,6 +134,13 @@ const Navbar = () => {
                 {item}
               </Link>
             ))}
+            <Link
+              to={senseiPath}
+              className="py-2 px-4 font-general text-violet-600 font-semibold hover:bg-gray-200"
+              onClick={toggleMenu}
+            >
+              🎌 Sensei
+            </Link>
           </div>
         </div>
       )}

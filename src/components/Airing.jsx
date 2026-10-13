@@ -1,76 +1,68 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useGlobalContext } from '../context/Global';
+import AnimeCard from './ui/AnimeCard';
 import Sidebar from './ui/Sidebar';
 
 function Airing() {
-  const { airingAnime, searchResults, isSearch, isLoading, rendered } = useGlobalContext();
+  const {
+    airingAnime, searchResults, isSearch,
+    isLoading, error, rendered,
+    getAiringAnime,
+  } = useGlobalContext();
 
-  // Loading state
+  // Fetch airing data the first time this tab becomes active
+  useEffect(() => {
+    if (rendered === 'airing' && (!airingAnime || airingAnime.length === 0)) {
+      getAiringAnime();
+    }
+  }, [rendered]); // eslint-disable-line react-hooks/exhaustive-deps
+
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <p className="text-lg font-semibold text-gray-500">Loading...</p>
+      <div className="flex justify-center items-center py-20">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-green-400 border-t-transparent rounded-full animate-spin" />
+          <p className="text-gray-500 font-general text-sm">Loading airing anime…</p>
+        </div>
       </div>
     );
   }
 
-  // Conditional render for airing anime or search results
-  const conditionalRender = () => {
-    if (!isSearch && rendered === 'airing') {
-      if (!airingAnime || airingAnime.length === 0) {
-        return (
-          <div className="text-center text-gray-500 text-lg">
-            No airing anime found.
-          </div>
-        );
-      }
-      return airingAnime.map((anime) => (
-        <Link
-          to={`/anime/${anime.mal_id}`}
-          key={anime.mal_id}
-          className="transform transition-all hover:scale-105"
-        >
-          <img
-            className="w-full h-full object-cover rounded-lg border-4 border-gray-200"
-            src={anime.images.jpg.large_image_url}
-            alt={anime.title}
-          />
-        </Link>
-      ));
-    } else {
-      if (!searchResults || searchResults.length === 0) {
-        return (
-          <div className="text-center text-gray-500 text-lg">
-            No search results found.
-          </div>
-        );
-      }
-      return searchResults.map((anime) => (
-        <Link
-          to={`/anime/${anime.mal_id}`}
-          key={anime.mal_id}
-          className="transform transition-all hover:scale-105"
-        >
-          <img
-            className="w-full h-full object-cover rounded-lg border-4 border-gray-200"
-            src={anime.images.jpg.large_image_url}
-            alt={anime.title}
-          />
-        </Link>
-      ));
-    }
-  };
+  if (error) {
+    return (
+      <div className="text-center text-red-500 text-sm font-general p-8">
+        {error} — please try again in a moment.
+      </div>
+    );
+  }
+
+  const list  = (!isSearch && rendered === 'airing') ? airingAnime : searchResults;
+  const empty = !list || list.length === 0;
 
   return (
-    <div className="flex flex-col lg:flex-row">
-      {/* Anime Grid */}
-      <div className="airing-anime grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-8 p-4 w-full bg-white border-t-4 border-gray-200">
-        {conditionalRender()}
+    <div className="flex flex-col lg:flex-row gap-6 px-4 py-6">
+      {/* Header */}
+      <div className="flex-1">
+        <div className="flex items-center gap-2 mb-5">
+          <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" />
+          <h2 className="text-lg font-bold text-gray-800">Currently Airing</h2>
+        </div>
+
+        {empty ? (
+          <p className="text-center text-gray-400 text-sm font-general py-10">
+            {isSearch ? 'No search results found.' : 'No airing anime found.'}
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {list.map((anime) => (
+              <AnimeCard key={anime.mal_id} anime={anime} />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Sidebar */}
-      <div className="w-full lg:w-1/4 mt-8 lg:mt-0 px-4">
+      <div className="w-full lg:w-72 flex-shrink-0">
         <Sidebar />
       </div>
     </div>

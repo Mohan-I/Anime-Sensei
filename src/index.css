@@ -394,7 +394,7 @@ body {
 }
 
 .auth-background {
-  background-image: url('../public/img/authBG.webp'); /* relative path from css file */
+  background-image: url('../img/authBG.webp'); /* relative path from css file */
   background-size: cover;
   background-repeat: no-repeat;
   height: auto;
