@@ -92,7 +92,7 @@ function AnimePage() {
               />
               <button
                 type="submit"
-                className="absolute right-0 top-1/2 transform -translate-y-1/2 px-3 sm:px-4 py-2 bg-gradient-to-r from-teal-300 to-indigo-600 text-white rounded-full text-sm sm:text-base"
+                className="absolute right-0 top-1/2 transform -translate-y-1/2 px-2 sm:px-4 py-2 bg-gradient-to-r from-blue-400 to-indigo-600 text-white rounded-full text-sm sm:text-base"
               >
                 Search
               </button>

@@ -42,6 +42,13 @@ export default defineConfig(async ({ mode }) => {
     },
 
     server: {
+      // Firebase Auth signInWithPopup requires window.opener to remain intact.
+      // Vite 5+ sends Cross-Origin-Opener-Policy: same-origin by default in dev,
+      // which severs that reference and causes auth/popup-closed-by-user errors.
+      // Setting unsafe-none restores the expected browser behavior in dev only.
+      headers: {
+        'Cross-Origin-Opener-Policy': 'unsafe-none',
+      },
       proxy: tenraiProxyAvailable ? {
         '/tenrai': {
           target:       TENRAI_TARGET,

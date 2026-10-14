@@ -45,7 +45,7 @@ Anime Sensei is a high‑performance web application for discovering and streami
 ## 🗺️ Development Roadmap
 
 - [x] Responsive UI/UX design  
-- [x] Jikan API integration with search & pagination  
+- [x] Jikan API integration with search & pagination  (Reupdated and Changed from JIkan APIs to terian APIS)
 - [x] Google OAuth authentication  
 - [x] Lighthouse 98/100 optimization  
 - [ ] Backend API release (Node.js + PostgreSQL)  
@@ -79,7 +79,7 @@ npm run dev
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please open an issue or submit a PR for any improvements, bug fixes, or feature requests.
+Contributions are welcome! Please open an issue or submit a PR for any improvements, bug fixes, or feature requests. 
 
 ---
 

@@ -39,7 +39,7 @@ function SignInwithGoogle() {
         onClick={googleLogin}
       > 
         <img src="./img/google.svg" alt="Google" className="w-12 h-12" />
-        <span class="ml-2">Sign in with Google</span>
+        <span className="ml-2">Sign in with Google</span>
       </div>
     </div>
   );
