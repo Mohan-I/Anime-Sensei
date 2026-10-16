@@ -72,16 +72,16 @@ const PricingPlan = () => {
               <tbody>
                 <tr>
                   <td className="py-4 pr-4 font-medium border-b border-gray-200">
-                    Epsiodes
+                    Free Epsiodes
                   </td>
                   <td className="px-4 py-4 text-center border-b border-gray-200">
                     05
                   </td>
                   <td className="px-4 py-4 text-center border-b border-gray-200">
-                    20
+                    200
                   </td>
                   <td className="px-4 py-4 text-center text-white bg-gray-900 border-b border-white/20">
-                    50
+                    500
                   </td>
                   <td className="px-4 py-4 text-center border-b border-gray-200">
                     Unlimited

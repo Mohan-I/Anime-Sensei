@@ -8,7 +8,6 @@ body {
   width: 100dvw;
   overflow-x: hidden;
   background-color: #F0F3FF;
-  opacity: 1;
   background-image: linear-gradient(#a9a9a955 0.4px, transparent 0.4px), linear-gradient(to right, #a9a9a955 0.4px, #e8dff0 0.4px);
   background-size: 8px 8px;
   font-family: "General Sans", sans-serif;
