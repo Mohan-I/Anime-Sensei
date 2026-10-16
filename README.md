@@ -83,6 +83,10 @@ Contributions are welcome! Please open an issue or submit a PR for any improveme
 
 ---
 
+## 🏆 Featured & Recognized
+
+- **XERJ Corpus Hub:** Selected and indexed as a reference implementation for AI coding agents regarding large-scale API migrations and data fetching architectures in React/JavaScript.
+
 ## 📝 License
 
 Distributed under the MIT License.
