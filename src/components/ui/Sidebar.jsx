@@ -10,7 +10,7 @@ function SidebarCard({ anime }) {
   return (
     <Link
       to={`/anime/${anime.mal_id}`}
-      className="flex items-center gap-3 group hover:bg-violet-50 rounded-xl p-2 -mx-2 transition-colors"
+      className="flex items-center gap-2 group hover:bg-violet-50 rounded-xl w-full p-2 -mx-2 transition-colors"
     >
       {/* Thumbnail */}
       <div className="flex-shrink-0 w-14 h-20 rounded-lg overflow-hidden bg-gray-100">
@@ -24,8 +24,8 @@ function SidebarCard({ anime }) {
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-violet-500 to-indigo-600
-                          flex items-center justify-center p-1">
-            <span className="text-white text-[9px] font-bold text-center leading-tight line-clamp-3">
+                          flex items-center justify-center">
+            <span className="text-white text-[12px] font-bold text-center leading-tight line-clamp-3">
               {anime.title}
             </span>
           </div>
@@ -34,17 +34,20 @@ function SidebarCard({ anime }) {
 
       {/* Info */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 group-hover:text-violet-700 transition-colors">
+        <p className="text-sm font-semibold text-gray-800 leading-snug line-clamp-2 group-hover:text-violet-700 transition-colors mb-2">
           {anime.title}
         </p>
+        <div className='flex gap-2'>
+        
+        {anime.genres?.slice(0, 1).map((g) => (
+          <span key={g.name} className="text-xs text-zinc-100 bg-violet-600 p-1 font-semibold rounded">{g.name}</span>
+        ))}
         {anime.score > 0 && (
-          <p className="text-xs text-yellow-500 font-semibold mt-0.5">
+          <p className="text-xs bg-yellow-400 text-yellow-200 rounded p-1 font-semibold">
             ★ {anime.score.toFixed(2)}
           </p>
         )}
-        {anime.genres?.slice(0, 1).map((g) => (
-          <span key={g.name} className="text-[10px] text-gray-400 font-general">{g.name}</span>
-        ))}
+        </div>
       </div>
     </Link>
   );
@@ -60,8 +63,8 @@ function Sidebar() {
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-5">
-      <h3 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
-        <span className="text-yellow-500">★</span> Top 5 Popular
+      <h3 className="text-base border-b-2 py-2 font-bold uppercase text-gray-900 mb-4 flex items-center gap-2">
+        Top 5 Popular
       </h3>
 
       {top5.length === 0 ? (
@@ -71,9 +74,6 @@ function Sidebar() {
           {top5.map((anime, i) => (
             <div key={anime.mal_id} className="pt-1 first:pt-0">
               <div className="flex items-start gap-2">
-                <span className="text-xs font-bold text-gray-300 w-4 mt-2.5 flex-shrink-0">
-                  {i + 1}
-                </span>
                 <SidebarCard anime={anime} />
               </div>
             </div>

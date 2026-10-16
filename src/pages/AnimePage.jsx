@@ -30,20 +30,20 @@ function AnimePage() {
       return (
         <div>
           <h2 className="text-xl font-semibold mt-4 mb-2">Search Results:</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-12 mb-12">
             {searchResults.map((anime) => (
               <Link
               to={`/anime/${anime.mal_id}`}
               key={anime.mal_id}
               className="transform transition-all hover:scale-105"
             >
-              <div key={anime.mal_id} className="border p-2 rounded-md shadow-md">
+              <div key={anime.mal_id} className="border p-2 w-full h-full rounded-md bg-zinc-100 pb-8 shadow-md">
                 <img
                   src={anime.images.jpg.image_url}
                   alt={anime.title}
-                  className="w-full h-40 object-cover rounded-md mb-2"
+                  className="w-full h-full object-cover rounded-md mb-2"
                 />
-                <h3 className="text-sm font-medium">{anime.title}</h3>
+                <h3 className="text-sm font-medium border p-2 w-full rounded-md bg-zinc-100 shadow-md">{anime.title}</h3>
               </div>
               </Link>
             ))}

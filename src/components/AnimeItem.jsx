@@ -55,7 +55,7 @@ const CharCard = ({ character, role, voiceActors = [] }) => {
   return (
     <Link to={`/character/${mal_id}`}>
       <div className="group relative bg-gradient-to-br from-violet-600 to-indigo-500 rounded-2xl
-                      overflow-hidden hover:shadow-xl hover:scale-105 transition-all duration-300">
+                      overflow-hidden hover:shadow-xl w-[40-vw] hover:scale-105 transition-all duration-300">
         {/* Corner accents */}
         {["tl","tr","bl","br"].map((c) => (
           <div key={c} className={`absolute w-14 h-14 z-10
@@ -72,7 +72,7 @@ const CharCard = ({ character, role, voiceActors = [] }) => {
         <img
           src={poster}
           alt={name}
-          className="w-full h-48 object-cover object-top"
+          className="w-full h-[60vh] object-cover object-top"
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=200&background=6d28d9&color=fff&bold=true`;
@@ -80,12 +80,12 @@ const CharCard = ({ character, role, voiceActors = [] }) => {
         />
 
         {/* Info overlay */}
-        <div className="p-3">
-          <h4 className="text-white font-semibold text-sm truncate leading-snug">{name}</h4>
+        <div className="p-4">
+          <h4 className="text-white font-semibold text-md truncate leading-snug">{name}</h4>
           <div className="flex items-center justify-between mt-1 gap-1">
             <span className={`text-[10px] px-2 py-0.5 rounded-full font-general font-medium
               ${role === "Main"
-                ? "bg-yellow-300 text-yellow-900"
+                ? "bg-yellow-300 text-semibold text-yellow-800"
                 : "bg-white/20 text-white/80"}`}>
               {role}
             </span>
@@ -198,17 +198,17 @@ function AnimeItem() {
   }
 
   return (
-    <div className="bg-[#0d0d1a] min-h-screen pb-16">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+    <div className="bg-[#000] min-h-screen pb-16">
+      <div className="w-full mx-auto px-4 sm:px-6">
 
         {/* ── Trailer ──────────────────────────────────────────────────── */}
         <div className="pt-20 pb-6">
           {trailer?.embed_url ? (
-            <div className="rounded-2xl overflow-hidden shadow-2xl border border-white/10">
+            <div className="rounded-2xl overflow-hidden">
               <iframe
                 src={trailer.embed_url}
                 title={`${activeTitle} — Trailer`}
-                className="w-full aspect-video"
+                className="w-full h-full max-h-[80vh] aspect-video"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
