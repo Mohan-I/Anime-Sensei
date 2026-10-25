@@ -12,10 +12,19 @@ CREATE TABLE IF NOT EXISTS public.user_profiles (
   avatar_url      TEXT        DEFAULT NULL,
   banner_idx      INTEGER     DEFAULT 0,
   favorite_genres TEXT[]      DEFAULT '{}',
+  last_visited    JSONB       DEFAULT NULL,
+  preferences     JSONB       NOT NULL DEFAULT '{}'::jsonb,
+  subscription    JSONB       NOT NULL DEFAULT '{"plan":"basic","status":"default"}'::jsonb,
   age             INTEGER,
   created_at      TIMESTAMPTZ DEFAULT now(),
   updated_at      TIMESTAMPTZ DEFAULT now()
 );
+
+-- Add profile data fields when upgrading an existing installation.
+ALTER TABLE public.user_profiles
+  ADD COLUMN IF NOT EXISTS last_visited JSONB DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS preferences JSONB NOT NULL DEFAULT '{}'::jsonb,
+  ADD COLUMN IF NOT EXISTS subscription JSONB NOT NULL DEFAULT '{"plan":"basic","status":"default"}'::jsonb;
 
 -- 2. Enable RLS
 ALTER TABLE public.user_profiles ENABLE ROW LEVEL SECURITY;

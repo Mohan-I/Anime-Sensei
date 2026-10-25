@@ -206,6 +206,11 @@ export const searchAnimeApi          = (query)  => fetchTenrai('/anime', { q: qu
 export const getAnimeById            = (id)     => fetchTenrai(`/anime/${id}`);
 export const getAnimeFullById        = (id)     => fetchTenrai(`/anime/${id}/full`);
 export const getAnimeCharacters      = (id)     => fetchTenrai(`/anime/${id}/characters`);
+export const getAnimeEpisodes        = (id, page = 1) => fetchTenrai(`/anime/${id}/episodes`, { page });
+export const getAnimeVideos          = (id)     => fetchTenrai(`/anime/${id}/videos`);
+export const getAnimeEpisodeVideos   = (id, page = 1) => fetchTenrai(`/anime/${id}/videos/episodes`, { page });
+export const getAnimeNews            = (id, page = 1) => fetchTenrai(`/anime/${id}/news`, { page });
+export const getLatestAnimeNews      = (page = 1) => fetchTenrai('/news', { page });
 export const getCharacterById        = (id)     => fetchTenrai(`/characters/${id}`);
 export const getCharacterFullById    = (id)     => fetchTenrai(`/characters/${id}/full`);
 export const getCharacterPictures    = (id)     => fetchTenrai(`/characters/${id}/pictures`);

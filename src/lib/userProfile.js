@@ -47,7 +47,8 @@ export async function ensureUserProfile(supabase, userId) {
  *
  * @param {object} updates  Any subset of:
  *   username, display_name, avatar_url, banner_idx,
- *   favorite_genres (string[]), age
+ *   favorite_genres (string[]), age, last_visited, preferences,
+ *   subscription
  */
 export async function updateUserProfile(supabase, userId, updates) {
   const { error } = await supabase

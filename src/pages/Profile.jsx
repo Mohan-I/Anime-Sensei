@@ -97,6 +97,11 @@ const DEFAULT_PREFS = {
   allowRecommendations: true,
 };
 
+const DEFAULT_SUBSCRIPTION = {
+  plan: "basic",
+  status: "default",
+};
+
 // ── Tiny UI primitives ────────────────────────────────────────────────────────
 const SectionHeading = ({ children }) => (
   <h2 className="text-[10px] font-general font-semibold uppercase tracking-[0.15em] text-white/35 mb-4">
@@ -445,6 +450,11 @@ export default function Profile() {
   const favoriteGenres = sbProfile?.favorite_genres?.length
     ? sbProfile.favorite_genres
     : (userDetails?.favoriteGenres ?? []);
+  const lastVisited = sbProfile?.last_visited ?? userDetails?.lastWatched;
+  const subscription = {
+    ...DEFAULT_SUBSCRIPTION,
+    ...(sbProfile?.subscription ?? {}),
+  };
 
   // ── Loading state ──────────────────────────────────────────────────────
   if (fbLoading) {
@@ -590,6 +600,23 @@ export default function Profile() {
               </div>
             </section>
 
+            {/* Subscription */}
+            <section className="bg-gradient-to-br from-violet-600/20 to-indigo-600/10 border border-violet-500/20 rounded-2xl p-5">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <SectionHeading>Membership</SectionHeading>
+                  <p className="text-lg font-semibold text-white capitalize">{subscription.plan} plan</p>
+                  <p className="text-xs text-white/45 mt-1 capitalize">{subscription.status} membership</p>
+                </div>
+                <span className="rounded-full bg-violet-500/20 border border-violet-400/30 px-2.5 py-1 text-[10px] font-general uppercase tracking-wider text-violet-200">
+                  Default
+                </span>
+              </div>
+              <p className="text-xs text-white/45 leading-relaxed mt-4">
+                Your basic membership is active with the default Anime Sensei experience.
+              </p>
+            </section>
+
             {/* Favourite Genres */}
             <section className="bg-[#12122a] border border-white/[0.06] rounded-2xl p-5">
               <SectionHeading>Favourite Genres</SectionHeading>
@@ -664,14 +691,14 @@ export default function Profile() {
             </section>
 
             {/* Last Visited */}
-            {userDetails?.lastWatched?.animeId ? (
+            {lastVisited?.animeId ? (
               <section className="bg-[#12122a] border border-white/[0.06] rounded-2xl p-5 flex gap-4 items-start">
-                <img src={userDetails.lastWatched.image} alt={userDetails.lastWatched.title}
+                <img src={lastVisited.image} alt={lastVisited.title}
                   className="w-14 h-20 object-cover rounded-lg shadow flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-[10px] font-general uppercase tracking-widest text-violet-400 mb-1">Last Visited</p>
-                  <p className="text-sm font-semibold text-white leading-snug mb-3 truncate">{userDetails.lastWatched.title}</p>
-                  <Link to={`/anime/${userDetails.lastWatched.animeId}`}
+                  <p className="text-sm font-semibold text-white leading-snug mb-3 truncate">{lastVisited.title}</p>
+                  <Link to={`/anime/${lastVisited.animeId}`}
                     className="inline-flex items-center gap-1.5 bg-violet-600 hover:bg-violet-500 text-white text-xs font-general px-4 py-1.5 rounded-full transition-all active:scale-95">
                     Continue Watching →
                   </Link>

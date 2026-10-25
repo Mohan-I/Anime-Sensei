@@ -1,7 +1,7 @@
-import React from 'react'
 import RatedAnime from '../components/RatedAnime'
 import Slider from '../components/ui/Slider'
 import SuggestedGroups from '../components/SuggestedGroups'
+import AnimeNews from '../components/AnimeNews'
 
 const CommunityPage = () => {
   return (
@@ -9,6 +9,7 @@ const CommunityPage = () => {
       <Slider />
       <RatedAnime />
       <SuggestedGroups />
+      <AnimeNews />
     </div>
   )
 }
