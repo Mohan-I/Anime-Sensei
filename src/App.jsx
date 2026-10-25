@@ -10,6 +10,7 @@ import BackToTopButton from "./components/ui/backToTop";
 import ScrollToTop from "./components/ScrollToTop";
 import { auth } from "./firebase/firebase"; // Import auth
 import ErrorBoundary from "./pages/Error";
+import { SupabaseProvider } from "./context/SupabaseContext";
 
 // Lazy load pages
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -24,6 +25,7 @@ const Gallery = lazy(() => import("./components/Gallery"));
 const Register = lazy(() => import("./pages/Register"));
 const Login = lazy(() => import("./pages/Login"));
 const Profile = lazy(() => import("./pages/Profile"));
+const MyList = lazy(() => import("./pages/MyList"));
 const SenseiPage = lazy(() => import("./pages/SenseiPage"));
 const Error = lazy(() => import("./pages/Error"));
 
@@ -55,6 +57,7 @@ function App() {
   return (
     <main className="relative min-h-screen w-screen overflow-x-hidden">
       <ErrorBoundary>
+      <SupabaseProvider>
       <BrowserRouter>
         <ScrollToTop />
         <Navbar />
@@ -79,6 +82,7 @@ function App() {
             <Route path={ROUTES.REGISTER} element={<Register />} />
             <Route path={ROUTES.LOGIN} element={<Login />} />
             <Route path={ROUTES.PROFILE} element={<PrivateRoute element={<Profile />} />} />
+            <Route path={ROUTES.MY_LIST} element={<PrivateRoute element={<MyList />} />} />
             <Route path={ROUTES.SENSEI} element={<SenseiPage />} />
             <Route path={ROUTES.ERROR} element={<Navigate to={ROUTES.HOME} replace />} />
             <Route path="/" element={<Navigate to={ROUTES.LOGIN} />} />
@@ -87,6 +91,7 @@ function App() {
         <BackToTopButton />
         <Footer />
       </BrowserRouter>
+      </SupabaseProvider>
       </ErrorBoundary>
     </main>
   );
