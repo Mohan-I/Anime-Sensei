@@ -113,7 +113,7 @@ export default function AnimeCard({ anime }) {
       </div>
 
       {/* ── Info ───────────────────────────────────────────────────────── */}
-      <div className="flex flex-1 flex-col gap-2 px-3.5 pb-3.5 pt-3">
+      <div className="flex flex-1 flex-col bg-slate-200 gap-2 px-3.5 pb-3.5 pt-3">
         <h3 className="font-semibold text-gray-800 text-[13.5px] leading-snug line-clamp-2
                        group-hover:text-violet-700 transition-colors duration-200">
           {title}

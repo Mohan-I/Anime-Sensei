@@ -43,7 +43,7 @@ function SidebarCard({ anime }) {
           <span key={g.name} className="text-xs text-zinc-100 bg-violet-600 p-1 font-semibold rounded">{g.name}</span>
         ))}
         {anime.score > 0 && (
-          <p className="text-xs bg-yellow-400 text-yellow-200 rounded p-1 font-semibold">
+          <p className="text-xs bg-yellow-400 text-yellow-800 rounded p-1 font-semibold">
             ★ {anime.score.toFixed(2)}
           </p>
         )}
