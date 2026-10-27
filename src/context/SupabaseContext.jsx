@@ -1,76 +1,60 @@
 /**
  * context/SupabaseContext.jsx
  * ─────────────────────────────────────────────────────────────────────────────
- * Supabase integration context for Anime Sensei.
+ * Supabase data-layer context for Anime Sensei (Firebase Auth app).
  *
- * Architecture decision
- * ─────────────────────
- * The app already uses Firebase Auth for sign-in (email + Google OAuth).
- * Rather than replace that, Supabase is added as a *data layer* alongside it.
+ * Architecture
+ * ─────────────
+ * Identity provider : Firebase Auth
+ * Data layer        : Supabase (anon key, no Supabase Auth session)
  *
- * The link between the two systems is the Firebase UID:
- *   user_profiles.firebase_uid = auth.currentUser.uid
+ * `user_profiles.id`     = Firebase UID  (TEXT primary key)
+ * `user_anime_list.user_id` = Firebase UID (TEXT)
  *
- * This context:
- *   1. Holds the singleton Supabase client (created once, never re-created).
- *   2. Watches Firebase Auth state — when a user is signed in it calls
- *      ensureUserProfile() to upsert a Supabase profile row keyed by firebase_uid.
- *   3. Exposes `supabase`, `sbProfile`, `sbLoading`, `refreshProfile`,
- *      `applyProfileUpdate` to all consumers.
- *   4. Re-exports `isSupabaseConfigured` so the UI can degrade gracefully when
- *      the env vars are missing.
- *
- * Usage
- * ─────
- *   // Wrap once in App.jsx (inside Firebase provider, outside pages):
- *   <SupabaseProvider>…</SupabaseProvider>
- *
- *   // In any component:
- *   const { supabase, sbProfile, sbLoading } = useSupabase();
+ * RLS policies are set to `true` on both tables — the anon key has no
+ * ability to run arbitrary SQL, and every query already filters by the
+ * Firebase UID in the WHERE clause, so only that user's rows are returned.
  */
 
-import { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
-import { auth } from '../firebase/firebase';
+import {
+  createContext, useContext, useEffect,
+  useState, useCallback, useMemo,
+} from 'react';
+import { auth }                          from '../firebase/firebase';
 import { getSupabaseClient, isSupabaseConfigured } from '../lib/supabase';
-import { ensureUserProfile, updateUserProfile } from '../lib/userProfile';
 
-// ── Context ───────────────────────────────────────────────────────────────────
 const SupabaseContext = createContext(null);
 
-// ── Provider ──────────────────────────────────────────────────────────────────
 export function SupabaseProvider({ children }) {
-  // Create the singleton once — never re-create inside a render
-  const supabase = useMemo(() => getSupabaseClient(), []);
+  const supabase   = useMemo(() => getSupabaseClient(), []);
+  const configured = isSupabaseConfigured();
 
   const [firebaseUser, setFirebaseUser] = useState(null);
   const [sbProfile,    setSbProfile]    = useState(null);
   const [sbLoading,    setSbLoading]    = useState(true);
-  const configured = isSupabaseConfigured();
 
-  // ── Fetch / create profile for the given Firebase UID ──────────────────
+  // ── Fetch / upsert profile row keyed by Firebase UID ──────────────────
   const fetchProfile = useCallback(async (uid) => {
     if (!configured) { setSbLoading(false); return; }
     try {
-      // Look up profile by firebase_uid (not Supabase auth.uid —
-      // we're using Firebase Auth, so Supabase is in anon mode).
+      // Try to load existing row
       let { data, error } = await supabase
         .from('user_profiles')
         .select('*')
-        .eq('firebase_uid', uid)
+        .eq('id', uid)          // id IS the Firebase UID (TEXT)
         .maybeSingle();
 
       if (error) throw error;
 
-      // First sign-in: create the profile row
+      // First login — create the row
       if (!data) {
-        const { data: created, error: insertErr } = await supabase
+        const res = await supabase
           .from('user_profiles')
-          .insert({ firebase_uid: uid })
+          .insert({ id: uid })
           .select()
           .single();
-
-        if (insertErr) throw insertErr;
-        data = created;
+        if (res.error) throw res.error;
+        data = res.data;
       }
 
       setSbProfile(data);
@@ -82,9 +66,9 @@ export function SupabaseProvider({ children }) {
     }
   }, [supabase, configured]);
 
-  // ── Listen to Firebase Auth state ─────────────────────────────────────
+  // ── Watch Firebase Auth ────────────────────────────────────────────────
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+    const unsub = auth.onAuthStateChanged(async (user) => {
       setFirebaseUser(user);
       if (user) {
         setSbLoading(true);
@@ -94,45 +78,33 @@ export function SupabaseProvider({ children }) {
         setSbLoading(false);
       }
     });
-    return () => unsubscribe();
+    return () => unsub();
   }, [fetchProfile]);
 
-  // ── Helpers ───────────────────────────────────────────────────────────
-  const refreshProfile = useCallback(async () => {
-    if (firebaseUser) {
-      setSbLoading(true);
-      await fetchProfile(firebaseUser.uid);
-    }
-  }, [firebaseUser, fetchProfile]);
-
-  /**
-   * Optimistic local update — use before the async DB call so the UI
-   * reflects the change instantly.
-   * @param {Partial<object>} updates
-   */
+  // ── Optimistic local update ────────────────────────────────────────────
   const applyProfileUpdate = useCallback((updates) => {
     setSbProfile((prev) => (prev ? { ...prev, ...updates } : prev));
   }, []);
 
-  /**
-   * Persist profile changes to Supabase and sync local state.
-   * Looks up by firebase_uid since we're not using Supabase Auth.
-   */
+  const refreshProfile = useCallback(async () => {
+    if (firebaseUser) { setSbLoading(true); await fetchProfile(firebaseUser.uid); }
+  }, [firebaseUser, fetchProfile]);
+
+  // ── Persist profile changes ────────────────────────────────────────────
   const saveProfile = useCallback(async (updates) => {
-    if (!sbProfile?.id) return;
-    applyProfileUpdate(updates);           // optimistic
+    if (!firebaseUser?.uid) return;
+    applyProfileUpdate(updates);
     try {
       const { error } = await supabase
         .from('user_profiles')
         .update(updates)
-        .eq('firebase_uid', firebaseUser?.uid);
+        .eq('id', firebaseUser.uid);
       if (error) throw error;
     } catch (e) {
-      // Revert on failure
-      await refreshProfile();
+      await refreshProfile();   // revert on failure
       throw e;
     }
-  }, [sbProfile, supabase, firebaseUser, applyProfileUpdate, refreshProfile]);
+  }, [supabase, firebaseUser, applyProfileUpdate, refreshProfile]);
 
   const value = useMemo(() => ({
     supabase,
@@ -143,7 +115,8 @@ export function SupabaseProvider({ children }) {
     refreshProfile,
     applyProfileUpdate,
     saveProfile,
-  }), [supabase, firebaseUser, sbProfile, sbLoading, configured, refreshProfile, applyProfileUpdate, saveProfile]);
+  }), [supabase, firebaseUser, sbProfile, sbLoading, configured,
+       refreshProfile, applyProfileUpdate, saveProfile]);
 
   return (
     <SupabaseContext.Provider value={value}>
@@ -152,7 +125,6 @@ export function SupabaseProvider({ children }) {
   );
 }
 
-// ── Consumer hook ─────────────────────────────────────────────────────────────
 export function useSupabase() {
   const ctx = useContext(SupabaseContext);
   if (!ctx) throw new Error('useSupabase must be used inside <SupabaseProvider>');

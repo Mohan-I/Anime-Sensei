@@ -88,103 +88,121 @@ const SuggestedGroups = () => {
     visible: {
       opacity: 1,
       y: 0,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut"
-      }
+      transition: { duration: 0.4, ease: "easeOut" }
     }
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 shadow-sm p-4 md:p-6">
+    <div className="relative bg-[#0a0a0f] p-8 md:p-20 border border-white/[0.06]">
       {/* Header Section */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white">Suggested Groups</h2>
-          <p className="text-gray-500 dark:text-gray-300">Find communities you might like</p>
+          <h2 className="text-xl font-bold text-white md:text-2xl">Suggested Groups</h2>
+          <p className="mt-1 text-sm text-white/40">Find communities you might like</p>
         </div>
         <NavLink 
           to="/" 
-          className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
+          className="text-sm font-semibold text-violet-400 transition-colors hover:text-violet-300"
         >
-          See all
+          See all &rarr;
         </NavLink>
       </div>
 
       {/* Groups Grid */}
-      <div className="grid md:grid-cols-2 gap-4">
-        {groups.slice(0, visibleGroups).map((group, index) => (
-          <motion.div
-            key={group.id}
-            variants={groupVariants}
-            initial="hidden"
-            animate="visible"
-            transition={{ delay: index * 0.1 }}
-            className={`bg-gradient-to-r ${index % 3 === 0 ? 'from-purple-500 to-blue-500' : index % 3 === 1 ? 'from-pink-500 to-red-500' : 'from-teal-500 to-green-500'} rounded-xl p-4 flex flex-col md:flex-row gap-4 shadow-md hover:shadow-lg transition-shadow`}
-          >
-            <div className="w-full md:w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden relative">
-              <img
-                src={group.image}
-                className="absolute w-full h-full inset-0 object-cover"
-                alt={group.name}
-              />
-              <div className="absolute bottom-1 left-1 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded">
-                {group.category}
-              </div>
-            </div>
-            
-            <div className="flex-1 text-white">
-              <h3 className="font-bold text-lg mb-1">{group.name}</h3>
-              
-              <div className="flex items-center gap-3 text-sm mb-2">
-                <div className="flex items-center">
-                  <FaUserFriends className="mr-1" />
-                  {group.members}
-                </div>
-                <div className="flex items-center">
-                  <FaRegComments className="mr-1" />
-                  {group.postsPerWeek}
-                </div>
-              </div>
-              
-              <div className="flex items-center">
-                <div className="flex -space-x-2">
-                  {group.avatars.map((avatar, idx) => (
-                    <img
-                      key={idx}
-                      src={avatar}
-                      className="w-7 h-7 rounded-full border-2 border-white"
-                      alt=""
-                    />
-                  ))}
-                </div>
-                <span className="ml-2 text-sm opacity-90">{group.friends}</span>
-              </div>
-            </div>
-            
-            <button 
-              onClick={() => handleJoinGroup(group.id)}
-              className={`flex items-center justify-center gap-1 px-4 py-2 rounded-lg font-medium self-center md:self-end mt-2 md:mt-0 transition-all ${
-                joinedGroups.includes(group.id) 
-                  ? 'bg-white bg-opacity-20 border border-white' 
-                  : 'bg-white text-gray-800 hover:bg-opacity-90'
-              }`}
+      <div className="grid gap-4 md:grid-cols-2">
+        {groups.slice(0, visibleGroups).map((group, index) => {
+          const isJoined = joinedGroups.includes(group.id);
+
+          return (
+            <motion.div
+              key={group.id}
+              variants={groupVariants}
+              initial="hidden"
+              animate="visible"
+              transition={{ delay: index * 0.05 }}
+              className="group relative flex flex-col gap-4 overflow-hidden rounded-2xl 
+                         border border-white/[0.06] bg-white/[0.03] p-4
+                         transition-all duration-300 hover:border-violet-400/30 
+                         hover:bg-white/[0.05] hover:shadow-[0_8px_30px_-10px_rgba(139,92,246,0.25)]
+                         sm:flex-row sm:items-center"
             >
-              <TiGroup className="text-lg" />
-              {joinedGroups.includes(group.id) ? 'Joined' : 'Join'}
-            </button>
-          </motion.div>
-        ))}
+              {/* Image with Category Badge */}
+              <div className="relative h-24 w-full flex-shrink-0 overflow-hidden rounded-xl sm:w-24">
+                <img
+                  src={group.image}
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  alt={group.name}
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-black/20" />
+                <div className="absolute bottom-1.5 left-1.5 rounded-md bg-black/60 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-md ring-1 ring-white/10">
+                  {group.category}
+                </div>
+              </div>
+              
+              {/* Info */}
+              <div className="min-w-0 flex-1">
+                <h3 className="truncate text-base font-bold text-white mb-1.5">
+                  {group.name}
+                </h3>
+                
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-white/50">
+                  <div className="flex items-center gap-1.5">
+                    <FaUserFriends className="text-violet-400" />
+                    {group.members}
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <FaRegComments className="text-violet-400" />
+                    {group.postsPerWeek}
+                  </div>
+                </div>
+                
+                <div className="mt-3 flex items-center">
+                  <div className="flex -space-x-1.5">
+                    {group.avatars.map((avatar, idx) => (
+                      <img
+                        key={idx}
+                        src={avatar}
+                        className="h-6 w-6 rounded-full border-2 border-[#0a0a0f] object-cover"
+                        alt=""
+                      />
+                    ))}
+                  </div>
+                  <span className="ml-2 text-[11px] font-medium text-white/40">
+                    {group.friends}
+                  </span>
+                </div>
+              </div>
+              
+              {/* Join Button */}
+              <button 
+                onClick={() => handleJoinGroup(group.id)}
+                className={`flex flex-shrink-0 items-center justify-center gap-1.5 rounded-full 
+                            px-4 py-2 text-xs font-bold transition-all duration-200
+                            sm:self-center
+                  ${isJoined 
+                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20' 
+                    : 'bg-violet-600 text-white hover:bg-violet-500 shadow-md shadow-violet-600/20 active:scale-95'
+                  }`}
+              >
+                <TiGroup className="text-base" />
+                {isJoined ? 'Joined' : 'Join'}
+              </button>
+            </motion.div>
+          );
+        })}
       </div>
 
       {/* Load More Button */}
       {visibleGroups < groups.length && (
-        <div className="flex justify-center mt-6">
+        <div className="mt-8 flex justify-center">
           <motion.button
             onClick={loadMore}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-gray-100 dark:bg-gray-700 hover:bg-indigo-200 dark:hover:bg-gray-600 py-2 px-6 rounded-full font-medium text-sm text-white shadow-sm transition-colors"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="rounded-full border border-white/10 bg-white/[0.04] px-6 py-2 
+                       text-sm font-semibold text-white/70 transition-colors 
+                       hover:bg-white/[0.08] hover:text-white"
           >
             Load more groups
           </motion.button>

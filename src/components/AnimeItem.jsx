@@ -5,6 +5,13 @@ import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { getAnimeById, getAnimeCharacters } from "../services/tenraiService";
 import EpisodeSection from "./EpisodeSection";
 import { useSupabase } from "../context/SupabaseContext";
+import { useAnimeListActions } from "../hooks/useAnimeListActions";
+import { getUserAnimeItem } from "../lib/userAnimeList";
+import { IoStar } from "react-icons/io5";
+import {
+  FiPlus, FiCheck, FiChevronDown,
+  FiStar, FiTrash2, FiPlusCircle,
+} from "react-icons/fi";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -108,6 +115,177 @@ const SectionHeading = ({ children }) => (
     {children}
   </h2>
 );
+
+// ── Live List Panel ───────────────────────────────────────────────────────────
+const STATUS_OPTIONS = [
+  { id: "watching",  label: "Watching",      color: "bg-blue-500/20 text-blue-300 border-blue-500/40"       },
+  { id: "completed", label: "Completed",     color: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40" },
+  { id: "planned",   label: "Plan to Watch", color: "bg-yellow-500/20 text-yellow-300 border-yellow-500/40"  },
+  { id: "paused",    label: "On Hold",       color: "bg-orange-500/20 text-orange-300 border-orange-500/40"   },
+  { id: "dropped",   label: "Dropped",       color: "bg-red-500/20 text-red-300 border-red-500/40"            },
+];
+const SCORES = [1,2,3,4,5,6,7,8,9,10];
+
+function LiveListPanel({ anime }) {
+  const { supabase, firebaseUser, configured } = useSupabase();
+  const [statusOpen, setStatusOpen] = useState(false);
+  const [scoreOpen,  setScoreOpen]  = useState(false);
+
+  const {
+    userListItem, setUserListItem, actionLoading,
+    handleAddToList, handleStatusChange, handleScoreChange,
+    handleProgressChange, handleRemove,
+  } = useAnimeListActions(supabase, firebaseUser?.uid);
+
+  // Seed from Supabase on mount
+  useEffect(() => {
+    if (!configured || !firebaseUser || !anime?.mal_id) return;
+    let cancelled = false;
+    getUserAnimeItem(supabase, firebaseUser.uid, anime.mal_id)
+      .then((item) => { if (!cancelled) setUserListItem(item ?? null); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [configured, firebaseUser, supabase, anime?.mal_id, setUserListItem]);
+
+  if (!configured) return null;
+  if (!firebaseUser) {
+    return (
+      <p className="mt-3 text-center text-xs text-white/35 font-general">
+        <Link to="/login" className="text-violet-400 hover:text-violet-300 transition-colors">Log in</Link>
+        {" "}to track this anime
+      </p>
+    );
+  }
+
+  const currentStatus = STATUS_OPTIONS.find((s) => s.id === userListItem?.status);
+  const canScore = userListItem && !["paused","planned"].includes(userListItem.status);
+
+  return (
+    <div className="mt-4 w-full space-y-2">
+      {/* ── Not in list ── */}
+      {!userListItem ? (
+        <button
+          onClick={() => handleAddToList({
+            mal_id:          anime.mal_id,
+            anime_title:     anime.title_english || anime.title,
+            anime_image_url: anime.images?.webp?.large_image_url
+                          || anime.images?.jpg?.large_image_url
+                          || null,
+            anime_year:  anime.year     ?? null,
+            anime_type:  anime.type     ?? null,
+            total_ep:    anime.episodes ?? null,
+          })}
+          disabled={actionLoading}
+          className="w-full flex items-center justify-center gap-2
+                     bg-violet-600 hover:bg-violet-500 disabled:opacity-50
+                     text-white text-sm font-semibold py-2.5 rounded-2xl
+                     transition-all active:scale-[0.98] shadow-lg shadow-violet-600/25"
+        >
+          {actionLoading
+            ? <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            : <FiPlus className="h-4 w-4" />
+          }
+          Add to List
+        </button>
+      ) : (
+        <>
+          {/* Status dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => { setStatusOpen((v) => !v); setScoreOpen(false); }}
+              className={`w-full flex items-center justify-between gap-2 px-4 py-2.5
+                          rounded-2xl border text-sm font-medium transition-all
+                          ${currentStatus?.color ?? "bg-white/5 text-white border-white/10"}`}
+            >
+              <span>{currentStatus?.label ?? "Set status"}</span>
+              <FiChevronDown className={`h-4 w-4 transition-transform ${statusOpen ? "rotate-180" : ""}`} />
+            </button>
+
+            {statusOpen && (
+              <div className="absolute left-0 right-0 top-full mt-1 z-30
+                              bg-[#1c1c35] border border-white/10 rounded-2xl shadow-2xl py-1">
+                {STATUS_OPTIONS.map((s) => (
+                  <button key={s.id}
+                    onClick={() => { handleStatusChange(anime.mal_id, s.id); setStatusOpen(false); }}
+                    className={`w-full text-left px-4 py-2 text-xs font-general transition-colors
+                                hover:bg-white/5 flex items-center gap-2
+                                ${userListItem.status === s.id ? "text-violet-300" : "text-white/60"}`}
+                  >
+                    {userListItem.status === s.id && <FiCheck className="h-3 w-3 text-violet-400 flex-shrink-0" />}
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Episode +1 and Score row */}
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleProgressChange(anime.mal_id, (userListItem.progress_ep ?? 0) + 1)}
+              className="flex-1 flex items-center justify-center gap-1.5
+                         bg-white/[0.05] hover:bg-violet-600/20
+                         border border-white/10 hover:border-violet-500/40
+                         text-white/70 hover:text-white text-xs font-general
+                         py-2 rounded-xl transition-all"
+              title="Mark next episode watched"
+            >
+              <FiPlusCircle className="h-3.5 w-3.5" />
+              Ep {(userListItem.progress_ep ?? 0) + 1}
+              {userListItem.total_ep ? `/${userListItem.total_ep}` : ""}
+            </button>
+
+            {canScore && (
+              <div className="relative">
+                <button
+                  onClick={() => { setScoreOpen((v) => !v); setStatusOpen(false); }}
+                  className="flex items-center gap-1.5 bg-white/[0.05] hover:bg-amber-500/20
+                             border border-white/10 hover:border-amber-500/40
+                             text-amber-400 text-xs font-general
+                             py-2 px-3 rounded-xl transition-all"
+                  title="Rate this anime"
+                >
+                  <FiStar className="h-3.5 w-3.5" />
+                  {userListItem.score ?? "Rate"}
+                </button>
+
+                {scoreOpen && (
+                  <div className="absolute right-0 top-full mt-1 z-30
+                                  bg-[#1c1c35] border border-white/10 rounded-2xl shadow-2xl p-2">
+                    <div className="grid grid-cols-5 gap-1 w-28">
+                      {SCORES.map((s) => (
+                        <button key={s}
+                          onClick={() => { handleScoreChange(anime.mal_id, s); setScoreOpen(false); }}
+                          className={`text-xs py-1.5 rounded-lg font-general transition-colors
+                            ${userListItem.score === s
+                              ? "bg-amber-500/30 text-amber-300 ring-1 ring-amber-500/40"
+                              : "hover:bg-white/10 text-white/50 hover:text-white"}`}
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Remove */}
+          <button
+            onClick={() => handleRemove(anime.mal_id, anime.title_english || anime.title)}
+            className="w-full flex items-center justify-center gap-1.5
+                       text-[11px] text-white/25 hover:text-red-400 font-general
+                       transition-colors py-1"
+          >
+            <FiTrash2 className="h-3 w-3" />
+            Remove from list
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
 
 // ── Main component ────────────────────────────────────────────────────────────
 function AnimeItem() {
@@ -269,9 +447,7 @@ function AnimeItem() {
               {score > 0 && (
                 <div className="flex items-center gap-2 rounded-full border border-amber-400/25
                                 bg-amber-400/10 px-4 py-1.5">
-                  <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 text-amber-400">
-                    <path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9 4.8 17.6l1-5.8L1.5 7.7l5.9-.9L10 1.5z" />
-                  </svg>
+                  <IoStar className="h-4 w-4 text-amber-400" />
                   <span className="font-bold text-white">{score}</span>
                   {scored_by > 0 && (
                     <span className="text-xs text-white/40">
@@ -288,8 +464,10 @@ function AnimeItem() {
                   Ranked #{rank}
                 </div>
               )}
-            </div>
 
+              {/* ── Live list actions ──────────────────────────────── */}
+              <LiveListPanel anime={anime} />
+            </div>
             {/* ── Info column ────────────────────────────────────── */}
             <div className="min-w-0">
               {/* Title row */}

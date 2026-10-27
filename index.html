@@ -8,8 +8,9 @@
     <!--
       Content-Security-Policy
       ─────────────────────────────────────────────────────────────────────────
-      connect-src : Tenrai anime API + full Firebase suite (Auth, Firestore,
-                    Analytics config endpoint) + Google APIs.
+      connect-src : Tenrai anime API + Supabase data/auth endpoints + full
+                    Firebase suite (Auth, Firestore, Analytics config endpoint)
+                    + Google APIs.
       script-src  : Google Tag Manager (Analytics) + apis.google.com (Auth popup).
       style-src   : fonts.cdnfonts.com (General Sans) + fonts.googleapis.com.
       font-src    : both CDN font hosts.
@@ -27,6 +28,8 @@
       frame-src https://www.youtube.com https://www.youtube-nocookie.com https://accounts.google.com https://anime-sensei-cca0b.firebaseapp.com https://www.google.com https://maps.google.com;
       connect-src 'self'
         https://api.tenrai.org
+        https://wzadpcygaqomunypfhlq.supabase.co
+        wss://wzadpcygaqomunypfhlq.supabase.co
         https://firebase.googleapis.com
         https://firestore.googleapis.com
         https://identitytoolkit.googleapis.com
